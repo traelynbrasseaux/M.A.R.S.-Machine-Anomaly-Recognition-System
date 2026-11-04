@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "features.h"
+#include "feature_extractor.h"
 
 namespace ml {
 

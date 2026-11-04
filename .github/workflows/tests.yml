@@ -1,0 +1,37 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v10.3.3
+
+      - name: Cache PlatformIO packages
+        uses: actions/cache@v6
+        with:
+          path: ~/.platformio
+          key: platformio-${{ runner.os }}-${{ hashFiles('firmware/node/platformio.ini') }}
+
+      - name: Install PlatformIO
+        run: pipx install platformio
+
+      # Build the node's ML for the PC as its own step, so a broken build fails the run
+      # instead of the C++ parity tests skipping themselves.
+      - name: Build firmware/node for the PC
+        run: pio run -e native -d firmware/node
+
+      - name: Lint
+        working-directory: host
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+
+      - name: Test
+        working-directory: host
+        run: uv run pytest

@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "features.h"
+#include "feature_extractor.h"
 #include "hdc.h"
 #include "mahalanobis.h"
 
