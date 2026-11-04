@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "detector.h"
-#include "features.h"
+#include "feature_extractor.h"
 #include "frame.h"
 #include "hdc.h"
 #include "mahalanobis.h"
