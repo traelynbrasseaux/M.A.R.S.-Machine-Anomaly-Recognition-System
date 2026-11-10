@@ -17,7 +17,7 @@ constexpr int PIN_MIC_SD = 33;
 constexpr int PIN_LED = 2;
 constexpr int PIN_BUTTON = 0;  // BOOT button, usable as an input after startup
 
-// Reserved for a later LoRa module on HSPI, skipping GPIO 12 (high at boot blocks startup).
+// Kept free for an optional LoRa module on HSPI (a stretch goal; alerts use Wi-Fi), skipping GPIO 12 (high at boot blocks startup).
 constexpr int PIN_LORA_SCK = 14;
 constexpr int PIN_LORA_MISO = 27;
 constexpr int PIN_LORA_MOSI = 13;

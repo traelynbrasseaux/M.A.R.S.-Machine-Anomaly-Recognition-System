@@ -4,7 +4,7 @@
 
 A magnet-mounted sensor node that learns a machine's normal vibration and sound signature and flags anomalies such as rotor unbalance, loose mounting, and pump intake clogs. Built for the Nexus Technology Cup (finals December 14 to 16, 2026).
 
-The node is an ELEGOO ESP-WROOM-32 dev board (original ESP32 with a CP2102 USB-UART chip) carrying an ADXL345 accelerometer (3200 Hz, SPI) and an INMP441 microphone (16 kHz, I2S). Right now it streams raw samples to a laptop over UART so the features and models can be developed on the host. Later phases add radio alerts to a gateway (ESP-NOW for the first prototype, then a LoRa module) and move feature extraction and HDC scoring into Verilog for an iCE40 UP5K and SKY130.
+The node is an ELEGOO ESP-WROOM-32 dev board (original ESP32 with a CP2102 USB-UART chip) carrying an ADXL345 accelerometer (3200 Hz, SPI) and an INMP441 microphone (16 kHz, I2S). Right now it streams raw samples to a laptop over UART so the features and models can be developed on the host. Later phases add Wi-Fi alerts to a gateway (a LoRa module is a stretch goal) and move feature extraction and HDC scoring into Verilog for an iCE40 UP5K and SKY130.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/img/system-diagram-dark.png">
@@ -26,7 +26,7 @@ The timeline is simulated: a 25 Hz motor whose 1x shaft vibration becomes 4 time
 - [x] Features and models ported to C++ for the node, matching the Python (HDC binary bit for bit)
 - [x] On-device learning, calibration and detection in the node firmware, with commands, score frames, button and LED
 - [ ] Recordings and false alarms per hour on the real rig
-- [ ] Radio alerts to a gateway (ESP-NOW, then LoRa)
+- [ ] Wi-Fi alerts to a gateway (LoRa as a stretch goal)
 - [ ] Magnet-mounted carrier
 - [ ] Fixed-point golden model for the RTL
 - [ ] Feature extraction and HDC in Verilog on an iCE40 UP5K FPGA
