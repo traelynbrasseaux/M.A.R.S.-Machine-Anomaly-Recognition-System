@@ -1,0 +1,8 @@
+# UPduino v3.1 pins, from tinyvision-ai-inc/UPduino-v3.0 RTL/common/upduino.pcf.
+# RGB LED on the dedicated driver pins, active low.
+set_io led_green 39
+set_io led_blue 40
+set_io led_red 41
+
+# Not used yet. The 12 MHz oscillator reaches pin 20 only after shorting R16 (OSC);
+# the FTDI UART is on 14 (FPGA TX) and 15 (FPGA RX), shared with the flash, so keep pin 16 high.
