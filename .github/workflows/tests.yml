@@ -54,4 +54,6 @@ jobs:
         run: make -C rtl sim
 
       - name: Synthesize and build bitstreams
-        run: make -C rtl stats upduino tangnano
+        run: |
+          make -C rtl stats upduino tangnano
+          make -C rtl upduino tangnano DESIGN=selftest

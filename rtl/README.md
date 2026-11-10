@@ -18,10 +18,11 @@ The golden model is `host/mhm/fixed/`, an integer version of the float Python in
 | Path | What |
 |------|------|
 | `src/hdc_core.v` | Binary HDC detector, two contexts (accel and audio) sharing one item memory |
+| `src/hdc_selftest.v` | On-chip check of the core against a ROM of windows and expected scores |
 | `src/mem/spram.v` | Generic single-port 16-bit RAM for simulation and the Tang Nano |
 | `src/mem/ice40/spram.v` | The same RAM as one iCE40 `SB_SPRAM256KA` block |
-| `boards/upduino/` | UPduino top level and pins |
-| `boards/tangnano20k/` | Tang Nano 20K top level and pins |
+| `boards/upduino/`, `boards/tangnano20k/` | Pins, plus a top level per design: `blinky.v` and `selftest.v` |
+| `scripts/selftest_rom.py` | Writes the self-test ROM from `FixedHdc` |
 | `tests/` | cocotb tests, run with pytest from the host's uv environment |
 
 ## Setup
@@ -37,14 +38,23 @@ Run from `rtl/`:
 
 | Command | Does |
 |---------|------|
-| `make lint` | Verilator lint of the core at full and test size, ruff on the tests |
-| `make sim` | cocotb tests against `host/mhm/fixed/` (about 80 s, mostly the full-size run) |
+| `make lint` | Verilator lint of the core and self-test, ruff on the tests and scripts |
+| `make sim` | cocotb tests against `host/mhm/fixed/` (about 2 minutes, mostly the full-size runs) |
 | `make stats` | Synthesizes the full-size core for both chips and prints the resource counts |
-| `make upduino`, `make tangnano` | Builds `build/upduino.bin` and `build/tangnano20k.fs` |
+| `make upduino`, `make tangnano` | Builds `build/upduino-blinky.bin` and `build/tangnano20k-blinky.fs` |
 | `make prog-upduino` | Writes the UPduino's flash with iceprog |
 | `make prog-tangnano`, `make flash-tangnano` | Loads the Tang Nano's SRAM (lost at power off), or writes its flash |
 
-Bring-up check: the UPduino's RGB LED steps through red, green, blue and white, and the Tang Nano's six LEDs count in binary.
+Add `DESIGN=selftest` to any board target for the self-test, for example `make prog-upduino DESIGN=selftest`.
+
+## Bring-up
+
+| Design | UPduino RGB LED | Tang Nano LEDs (0 to 5) |
+|--------|-----------------|-------------------------|
+| `blinky` | Steps through red, green, blue and white, about 0.7 s each | Count in binary, LED 0 toggling about every 0.3 s |
+| `selftest` | Blue while running, then green for pass or red for fail | LED 0 pass, LED 1 fail, LED 2 running; LED 5 blinks while the clock runs |
+
+The self-test runs `hdc_core` at full size on the chip: it rebuilds the item memory, writes the level edges for 45 features, bundles 4 windows, and scores 3 (one normal, one anomalous, one below every edge) against the scores `FixedHdc` gave them. It finishes about 70 ms after power-up, so the blue is only a flash; blue that stays on means it hung.
 
 ## HDC core
 
@@ -65,10 +75,15 @@ Vote counters and the bundled-window count are 16 bits, so one prototype can bun
 
 **Memory map.** Item memory, 16-bit words of W = DIM / 16: level l at `l * W`, tiebreak at `16 * W`, ID f at `(17 + f) * W`. Context memory: level edges at `{ctx, feature, level, half}` from 0, votes at `4096 + ctx * DIM`, prototypes at `4096 + 2 * DIM + ctx * W`.
 
-**Resources** at DIM 4096 with 45 IDs, from `make stats` (yosys only; place and route comes when a board top uses the core):
+**Resources** at DIM 4096 with 45 IDs. The core alone is from `make stats` (yosys); the self-test is the placed and routed board build, core plus sequencer plus its 1024 x 32 ROM:
 
 | | iCE40 UP5K | Gowin GW2AR-18 |
 |---|---|---|
-| LUTs | 1,042 of 5,280, plus 375 carry cells | 1,265 of 20,736 |
-| Flip-flops | 390 | 382 |
-| RAM | 2 of 4 SPRAM, 1 of 30 EBR | 13 of 46 BSRAM |
+| Core LUTs | 1,016 of 5,280, plus 375 carry cells | 1,225 of 20,736 |
+| Core flip-flops | 406 | 398 |
+| Core RAM | 2 of 4 SPRAM, 1 of 30 EBR | 13 of 46 BSRAM |
+| Self-test logic | 1,430 of 5,280 logic cells (27%) | 1,841 LUTs (8%), 496 flip-flops |
+| Self-test RAM | 2 SPRAM, 9 EBR | 31 of 46 BSRAM |
+| Self-test Fmax | 31.1 MHz (runs at 24) | 78.9 MHz (runs at 27) |
+
+On the Tang Nano, block RAM rather than logic is the scarce resource: each SPRAM-shaped memory takes about one BSRAM per 1K words.
