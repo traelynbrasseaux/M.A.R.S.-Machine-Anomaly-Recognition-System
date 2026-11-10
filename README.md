@@ -53,7 +53,7 @@ HDC needs only XOR, counting and comparing, which is what makes it a hardware ta
 | `firmware/node/` | PlatformIO project for the node: sampling and UART framing. Pins are in `include/pins.h`. |
 | `host/` | Python package `mhm` (uv, Python 3.12): capture tool, simulator, features, models, dataset loaders |
 | `host/scripts/` | Dataset download scripts, `evaluate.py`, and `make_figures.py` for the README figures |
-| `rtl/` | Verilog, starting in Week 4 |
+| `rtl/` | Verilog for the UPduino v3.1 (iCE40 UP5K) and Tang Nano 20K, tested against `host/mhm/fixed/`; see [rtl/README.md](rtl/README.md) |
 | `docs/` | [Node to host interface](docs/interface.md), [capture conventions](docs/capture-conventions.md), and [evaluation results](docs/evaluation-results.md); README figures in `docs/img/` |
 | `data/`, `logs/` | Captures, datasets, and logs (gitignored) |
 
