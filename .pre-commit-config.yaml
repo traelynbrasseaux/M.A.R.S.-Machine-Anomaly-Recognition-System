@@ -4,6 +4,6 @@ repos:
     hooks:
       - id: ruff-check
         args: [--fix]
-        files: ^host/
+        files: ^(host|rtl)/
       - id: ruff-format
-        files: ^host/
+        files: ^(host|rtl)/

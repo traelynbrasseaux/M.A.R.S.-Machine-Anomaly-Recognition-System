@@ -1,0 +1,5 @@
+# The cocotb tests follow the host's lint rules and import mhm as first-party code.
+extend = "../host/pyproject.toml"
+
+[lint.isort]
+known-first-party = ["mhm"]
