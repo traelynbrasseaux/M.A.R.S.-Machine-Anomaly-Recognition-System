@@ -156,6 +156,7 @@ module hdc_core #(
 
   wire [15:0] bound = word ^ im_rdata;  // E_ACC: ID word ^ level word
   wire [15:0] enc;  // the window's majority bits for this chunk
+  reg [15:0] enc_r;  // registered in E_END, which keeps the UP5K above 24 MHz
   genvar gi;
   generate
     for (gi = 0; gi < 16; gi = gi + 1) begin : g_dim
@@ -167,7 +168,7 @@ module hdc_core #(
   wire [15:0] n_bundled = ctx ? n_bundled1 : n_bundled0;
   wire [16:0] votes_twice = {cm_rdata, 1'b0};
   wire proto_bit = (votes_twice == {1'b0, n_bundled}) ? aux[b] : (votes_twice > {1'b0, n_bundled});
-  wire [4:0] chunk_mism = popcount16(enc ^ cm_rdata);
+  wire [4:0] chunk_mism = popcount16(enc_r ^ cm_rdata);
 
   wire last_word = w == a14(W - 1);
   /* verilator lint_off WIDTHEXPAND */
@@ -233,7 +234,7 @@ module hdc_core #(
       E_VWR: begin
         cm_we = 1'b1;
         cm_addr = vote_addr;
-        cm_wdata = cm_rdata + {15'd0, enc[b]};
+        cm_wdata = cm_rdata + {15'd0, enc_r[b]};
       end
       F_TIE: im_addr = tie_addr;
       F_RD: cm_addr = vote_addr;
@@ -394,7 +395,10 @@ module hdc_core #(
           f <= f + 6'd1;
           state <= (f + 6'd1 == nfeat) ? E_END : E_ID;
         end
-        E_END: state <= (op_r == OP_SCORE) ? E_SCORE : E_VRD;
+        E_END: begin
+          enc_r <= enc;
+          state <= (op_r == OP_SCORE) ? E_SCORE : E_VRD;
+        end
         E_SCORE: begin
           mism <= mism + {11'd0, chunk_mism};
           if (last_word) begin
