@@ -35,3 +35,23 @@ jobs:
       - name: Test
         working-directory: host
         run: uv run pytest
+
+  rtl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v10.3.3
+
+      - uses: YosysHQ/setup-oss-cad-suite@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Lint
+        run: make -C rtl lint
+
+      - name: Simulate against the fixed-point model
+        run: make -C rtl sim
+
+      - name: Synthesize and build bitstreams
+        run: make -C rtl stats upduino tangnano
