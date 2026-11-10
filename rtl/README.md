@@ -28,7 +28,7 @@ The golden model is `host/mhm/fixed/`, an integer version of the float Python in
 
 - **OSS CAD Suite** (yosys, nextpnr, icestorm, Apicula, Icarus, Verilator, openFPGALoader): unpack the [latest release](https://github.com/YosysHQ/oss-cad-suite-build/releases/latest) and work in the shell its `start.bat` (Windows) or `environment` script opens. That puts the suite first on PATH, which matters on Windows: other MinGW tools on PATH (Git, w64devkit) carry DLLs with the same names, and a tool that loads the wrong one exits with code 127 and no message.
 - **Python:** `uv sync` in `host/` installs cocotb with the other dev dependencies.
-- **GNU make:** comes with Linux and macOS; on Windows, w64devkit or Git for Windows' make both work.
+- **GNU make:** comes with Linux and macOS. Windows needs one installed, such as w64devkit's or `winget install ezwinports.make`. Flashing a prebuilt bitstream needs no make, only the suite.
 - **USB drivers for programming (Windows):** the open-source programmers need a libusb driver, installed once per PC with [Zadig](https://zadig.akeo.ie/) while the board is plugged in. For the UPduino pick the FTDI device and install libusbK. For the Tang Nano replace only interface 0 (JTAG), so interface 1 keeps its COM port.
 
 ## Commands
