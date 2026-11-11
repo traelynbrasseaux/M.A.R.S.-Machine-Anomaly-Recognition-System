@@ -20,7 +20,7 @@ constexpr uint8_t kAccelDrainAt = 16;  // half the FIFO, so a late poll still ha
 constexpr uint32_t kHealthPeriodMs = 10000;
 constexpr uint32_t kDebounceMs = 50;
 
-// VSPI for the accelerometer leaves HSPI free for the LoRa module, so radio traffic never stalls it.
+// VSPI for the accelerometer leaves HSPI free for an optional LoRa module, which then cannot stall its reads.
 SPIClass accelSpi(VSPI);
 Adxl345 accel(accelSpi, PIN_ADXL_CS);
 Inmp441 mic;

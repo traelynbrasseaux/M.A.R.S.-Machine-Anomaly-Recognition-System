@@ -290,7 +290,7 @@ STAGES = (
     Stage("Sense", ("Accelerometer,", "3 axes at 3,200 Hz", "Microphone, 16 kHz")),
     Stage("Features", ("1,024-sample windows", "33 vibration and", "45 sound features")),
     Stage("HDC detector", ("Encode as 4,096 bits", "and compare with", "the learned normal"), True),
-    Stage("Alert", ("Radio to a gateway", "ESP-NOW now,", "LoRa later")),
+    Stage("Alert", ("Wi-Fi to a gateway,", "with LoRa as a", "stretch goal")),
 )
 ROADMAP = (
     ("NOW", "ESP32 firmware, C++"),
